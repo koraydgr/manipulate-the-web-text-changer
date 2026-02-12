@@ -1,16 +1,22 @@
+// Manipulate! - Content Script v2.4.1
+
 let savedRange = null;
 let activeElement = null; 
 let initialState = null; 
 
+// Background.js'den gelen mesajı dinle
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "open_modal") {
     saveSelection();
-    if (savedRange && request.selectedText.trim().length > 0) {
+    if (savedRange && request.selectedText && request.selectedText.trim().length > 0) {
       const selection = window.getSelection();
       const parentElement = selection.anchorNode.parentElement;
-      const computedStyle = window.getComputedStyle(parentElement);
+      
+      // Hata önlemi: parentElement yoksa body al
+      const targetElement = parentElement || document.body;
+      const computedStyle = window.getComputedStyle(targetElement);
 
-      // Capture true original styles from the page
+      // Orijinal stilleri kaydet (Restore işlemi için)
       initialState = {
         text: request.selectedText,
         fontSize: computedStyle.fontSize,
@@ -24,7 +30,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       createLiveElement(request.selectedText);
       createShadowModal(request.selectedText);
     } else {
-      alert("Please select some text first.");
+      console.log("Manipulate: Metin seçilmedi.");
     }
   }
 });
@@ -37,21 +43,25 @@ function saveSelection() {
 }
 
 function createLiveElement(text) {
-  savedRange.deleteContents();
-  activeElement = document.createElement("span");
-  activeElement.textContent = text;
-  
-  // Apply the captured styles to match the original layout
-  activeElement.style.fontSize = initialState.fontSize;
-  activeElement.style.color = initialState.color;
-  activeElement.style.fontWeight = initialState.fontWeight;
-  activeElement.style.fontStyle = initialState.fontStyle;
-  activeElement.style.textDecoration = initialState.textDecoration;
-  activeElement.style.fontFamily = initialState.fontFamily;
-  activeElement.style.display = "inline-block"; 
-  activeElement.dataset.manipulated = "true"; 
-  
-  savedRange.insertNode(activeElement);
+  try {
+    savedRange.deleteContents();
+    activeElement = document.createElement("span");
+    activeElement.textContent = text;
+    
+    // Orijinal stilleri uygula
+    activeElement.style.fontSize = initialState.fontSize;
+    activeElement.style.color = initialState.color;
+    activeElement.style.fontWeight = initialState.fontWeight;
+    activeElement.style.fontStyle = initialState.fontStyle;
+    activeElement.style.textDecoration = initialState.textDecoration;
+    activeElement.style.fontFamily = initialState.fontFamily;
+    activeElement.style.display = "inline-block"; 
+    activeElement.dataset.manipulated = "true"; 
+    
+    savedRange.insertNode(activeElement);
+  } catch (e) {
+    console.error("Element oluşturma hatası:", e);
+  }
 }
 
 function createShadowModal(initialText) {
@@ -143,7 +153,7 @@ function createShadowModal(initialText) {
     }
     select#select-font:focus { outline: none; border-color: #F92672; }
 
-    /* Color Palette with Checkmark Effect */
+    /* Color Palette */
     .color-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; margin-bottom: 8px; padding: 4px; }
     .color-circle {
       width: 100%; aspect-ratio: 1; border-radius: 50%; cursor: pointer;
@@ -151,7 +161,6 @@ function createShadowModal(initialText) {
       position: relative;
     }
     .color-circle:hover { transform: scale(1.15); box-shadow: 0 4px 8px rgba(0,0,0,0.15); z-index: 2; }
-    
     .color-circle.selected { transform: scale(1.15); box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 2; border-color: rgba(0,0,0,0.2); }
     .color-circle.selected::after {
       content: ''; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%) rotate(45deg);
@@ -210,7 +219,7 @@ function createShadowModal(initialText) {
     #btn-restore:hover { background: #fdf2f8; border-color: #F92672; color: #F92672; }
     #btn-restore svg { width: 14px; height: 14px; }
 
-    /* Enlarged Footer and Creative Coffee Button */
+    /* Footer - Original Design Restored */
     .modal-footer {
       background: #f8fafc; padding: 16px 14px; border-top: 1px solid #e2e8f0;
       text-align: center; font-size: 13px; color: #64748b; border-radius: 0 0 9px 9px;
@@ -244,13 +253,18 @@ function createShadowModal(initialText) {
 
   const iconUrl = chrome.runtime.getURL('icons/16.png');
 
+  // GÜVENLİK DÜZELTMESİ YAPILDI AMA TASARIM ORİJİNAL HALİYLE KORUNDU
+  // "The Web Text Changer" geri geldi.
+  // "textarea" içi boş bırakıldı (XSS önlemi için).
+  // Footer kısmı tamamen orijinal haline döndürüldü.
+  
   container.innerHTML = `
     <div class="modal-header" id="drag-header">
       <div class="header-info">
         <h3>
           <img src="${iconUrl}" alt="Manipulate Icon" style="width:16px; height:16px; margin-right:6px; display:block;">
           Manipulate!
-          <span style="font-size:12px; font-weight:400; color:#d1d5db; background:rgba(255,255,255,0.15); padding:2px 6px; border-radius:4px; margin-left:6px;">v2.4.0</span>
+          <span style="font-size:12px; font-weight:400; color:#d1d5db; background:rgba(255,255,255,0.15); padding:2px 6px; border-radius:4px; margin-left:6px;">v2.4.1</span>
         </h3>
         <span class="subtitle">The Web Text Changer</span>
       </div>
@@ -264,9 +278,7 @@ function createShadowModal(initialText) {
 
     <div class="modal-body">
       <span class="label-text">Content</span>
-      <textarea id="input-text" spellcheck="false">${initialText}</textarea>
-
-      <div id="style-section">
+      <textarea id="input-text" spellcheck="false"></textarea> <div id="style-section">
         <span class="label-text">Style Settings</span>
         <div class="toolbar-top">
           <button class="style-btn" id="btn-bold" data-tip="Bold">B</button>
@@ -325,7 +337,13 @@ function createShadowModal(initialText) {
   shadow.appendChild(style);
   shadow.appendChild(container);
 
+  // --- ELEMENT SEÇİMLERİ ---
   const textArea = shadow.getElementById('input-text');
+  
+  // GÜVENLİK DÜZELTMESİ BURADA DEVREYE GİRİYOR
+  // HTML içine değil, DOM elementinin value özelliğine atıyoruz.
+  textArea.value = initialText;
+
   const sizeInput = shadow.getElementById('input-size');
   const fontSelect = shadow.getElementById('select-font');
   const btnBold = shadow.getElementById('btn-bold');
@@ -333,6 +351,8 @@ function createShadowModal(initialText) {
   const btnUnderline = shadow.getElementById('btn-underline');
   const restoreBtn = shadow.getElementById('btn-restore');
   const hexCopier = shadow.getElementById('hex-copier');
+  const styleSection = shadow.getElementById('style-section');
+  const toggleStyleBtn = shadow.getElementById('toggle-style-btn');
 
   // --- RESTORE LOGIC ---
   restoreBtn.onclick = () => {
@@ -376,7 +396,6 @@ function createShadowModal(initialText) {
   
   shadow.querySelectorAll('.color-circle').forEach(circle => {
     circle.onmouseenter = () => {
-      // Only show hover color if not currently displaying the "COPIED" state
       if (!hexCopier.classList.contains('copied')) {
         hexCopier.textContent = circle.dataset.color.toUpperCase();
       }
@@ -402,7 +421,6 @@ function createShadowModal(initialText) {
 
   // ELEGANT INLINE COPY ANIMATION
   hexCopier.onclick = () => {
-    // Always use currentCopierHex to prevent copying the "COPIED!" text
     navigator.clipboard.writeText(currentCopierHex).then(() => {
       hexCopier.textContent = "COPIED!";
       hexCopier.classList.add('copied');
@@ -414,12 +432,10 @@ function createShadowModal(initialText) {
     });
   };
 
-  const toggleStyleBtn = shadow.getElementById('toggle-style-btn');
-  const styleSection = shadow.getElementById('style-section');
-  const chevron = shadow.getElementById('style-chevron');
   toggleStyleBtn.onclick = () => {
     const isHidden = styleSection.style.display === 'none';
     styleSection.style.display = isHidden ? 'block' : 'none';
+    const chevron = shadow.getElementById('style-chevron');
     chevron.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(180deg)';
   };
 

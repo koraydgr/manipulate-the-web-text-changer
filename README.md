@@ -34,39 +34,62 @@ This extension is built with pure JavaScript, ensuring it is lightweight and fas
 manipulate/
 ├── background.js      # Handles background events and context menus
 ├── content.js         # Script injected into webpages to handle text manipulation
-├── manifest.json      # Configuration file (Must be named 'manifest.json' for Chrome to work)
+├── manifest.json      # Configuration file
 └── icons/             # App icons
     ├── 16.png
     ├── 48.png
     └── 128.png
+	
 ```
-## 📦 Installation (Developer Mode)
 
+📜 Version History
+v2.4.1 (Current) - Security & Compliance Update 🛡️
+🔒 Security Fix: Switched text injection method from innerHTML to direct value assignment to prevent potential XSS risks.
+
+🧹 Permissions Cleanup: Removed the unused scripting permission to strictly adhere to Chrome's "Least Privilege" policy.
+
+📝 Docs Updated: Updated Privacy Policy to reflect permission changes.
+
+v2.4.0 - Major UI Overhaul ✨
+🎨 Shadow DOM: Completely isolated the extension's CSS from the website's styles.
+
+🖱️ Draggable UI: The popup window can now be moved anywhere on the screen.
+
+⚡ Live Editing: Changes are applied instantly to the webpage as you type.
+
+📦 Installation (Developer Mode)
 Since this project is hosted on GitHub, you can install it as an "Unpacked Extension" in Chrome:
 
-1. **Clone or Download** this repository to your computer.
-2. Open Google Chrome and navigate to `chrome://extensions/`.
-3. **Toggle on Developer mode** in the top right corner.
-4. Click **Load unpacked** in the top left corner.
-5. **Select the folder** where you downloaded this repository.
-6. **Manipulate!** is now installed and ready to use! 🎉
+Clone or Download this repository to your computer.
 
-## 📖 How to Use
+Open Google Chrome and navigate to chrome://extensions/.
 
-1. **Select (highlight)** any text on a webpage.
-2. **Right-click** and choose **"Manipulate!"** from the context menu.
-3. **Type your new text** in the popup box.
-4. **Add style** (Bold, Color, Size) and hit the button!
+Toggle on Developer mode in the top right corner.
 
-## 🔒 Privacy & Security
+Click Load unpacked in the top left corner.
 
-This extension works **locally** on your browser.
+Select the folder where you downloaded this repository.
 
-* It does **not** collect data.
-* It does **not** store data.
-* It does **not** send your data anywhere.
-* It is designed purely for productivity and entertainment.
+Manipulate! is now installed and ready to use! 🎉
 
----
+📖 How to Use
+Select (highlight) any text on a webpage.
 
-**Download Manipulate! today and start changing the web!**
+Right-click and choose "Manipulate!" from the context menu.
+
+Type your new text in the popup box.
+
+Add style (Bold, Color, Size) and hit the button!
+
+🔒 Privacy & Security
+This extension works locally on your browser.
+
+It does not collect data.
+
+It does not store data.
+
+It does not send your data anywhere.
+
+It is designed purely for productivity and entertainment.
+
+Download Manipulate! today and start changing the web!

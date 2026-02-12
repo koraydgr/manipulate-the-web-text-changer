@@ -10,8 +10,7 @@
   },
   "permissions": [
     "contextMenus",
-    "activeTab",
-    "scripting"
+    "activeTab"
   ],
   "background": {
     "service_worker": "background.js"

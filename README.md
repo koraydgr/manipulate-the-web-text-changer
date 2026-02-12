@@ -40,39 +40,33 @@ manipulate/
     ├── 48.png
     └── 128.png
 ```
-📦 Installation (Developer Mode)
+## 📦 Installation (Developer Mode)
+
 Since this project is hosted on GitHub, you can install it as an "Unpacked Extension" in Chrome:
 
-Clone or Download this repository to your computer.
+1. **Clone or Download** this repository to your computer.
+2. Open Google Chrome and navigate to `chrome://extensions/`.
+3. **Toggle on Developer mode** in the top right corner.
+4. Click **Load unpacked** in the top left corner.
+5. **Select the folder** where you downloaded this repository.
+6. **Manipulate!** is now installed and ready to use! 🎉
 
-Open Google Chrome and navigate to chrome://extensions/.
+## 📖 How to Use
 
-Toggle on Developer mode in the top right corner.
+1. **Select (highlight)** any text on a webpage.
+2. **Right-click** and choose **"Manipulate!"** from the context menu.
+3. **Type your new text** in the popup box.
+4. **Add style** (Bold, Color, Size) and hit the button!
 
-Click Load unpacked in the top left corner.
+## 🔒 Privacy & Security
 
-Select the folder where you downloaded this repository.
+This extension works **locally** on your browser.
 
-Manipulate! is now installed and ready to use! 🎉
+* It does **not** collect data.
+* It does **not** store data.
+* It does **not** send your data anywhere.
+* It is designed purely for productivity and entertainment.
 
-📖 How to Use
-Select (highlight) any text on a webpage.
+---
 
-Right-click and choose "Manipulate!" from the context menu.
-
-Type your new text in the popup box.
-
-Add style (Bold, Color, Size) and hit the button!
-
-🔒 Privacy & Security
-This extension works locally on your browser.
-
-It does not collect data.
-
-It does not store data.
-
-It does not send your data anywhere.
-
-It is designed purely for productivity and entertainment.
-
-Download Manipulate! today and start changing the web!
+**Download Manipulate! today and start changing the web!**
